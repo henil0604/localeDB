@@ -1,12 +1,22 @@
 {
-  "name": "localeDB",
+  "name": "localedb",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "./build/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"No test specified\""
   },
-  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/henil0604/localeDB.git"
+  },
+  "keywords": [
+    "database",
+    "local",
+    "db",
+    "localDb",
+    "localeDb"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -18,5 +28,12 @@
   },
   "devDependencies": {
     "@types/node": "^7.10.14"
+  },
+  "bugs": {
+    "url": "https://github.com/henil0604/localeDB/issues"
+  },
+  "homepage": "https://github.com/henil0604/localeDB#readme",
+  "directories": {
+    "test": "tests"
   }
 }
