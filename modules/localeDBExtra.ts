@@ -1,3 +1,5 @@
+import { writeFileSync } from "fs";
+
 const fse = require("fs-extra");
 const hideFile = require("hidefile");
 const _path = require("path");
@@ -14,7 +16,8 @@ LocaleDBExtra.data.configPath = _path.join(
 LocaleDBExtra.config = {};
 LocaleDBExtra.config.dbFolderName = ".localeDB";
 LocaleDBExtra.config.dbFolderHidden = false;
-LocaleDBExtra.config.stagesFolderName = "localeStages";
+LocaleDBExtra.config.dbsFolder = "localeDBs";
+LocaleDBExtra.utils = {};
 
 LocaleDBExtra.paths = {};
 
@@ -55,19 +58,21 @@ LocaleDBExtra.setPaths = () => {
         ),
         content: JSON.stringify(
             {
-                data: LocaleDBExtra.data
+                data: LocaleDBExtra.data,
+                dbs: []
             }
         ),
         type: "file",
     }
 
-    LocaleDBExtra.paths.stagesFolder = {
+    LocaleDBExtra.paths.dbsFolder = {
         path: _path.join(
             LocaleDBExtra.paths.dbFolder.path,
-            LocaleDBExtra.config.stagesFolderName
+            LocaleDBExtra.config.dbsFolder
         ),
         type: "dir",
     };
+
 };
 
 LocaleDBExtra.createFileSystemWorkflow = () => {
@@ -117,6 +122,42 @@ LocaleDBExtra.loadConfig = () => {
         resolve(null);
     });
 };
+
+LocaleDBExtra.getDBdata = (): object => {
+    return require(LocaleDBExtra.paths.dbJson.path);
+}
+
+LocaleDBExtra.updateDbData = () => {
+    let data = LocaleDBExtra.getDBdata();
+    return {
+        data: data,
+        update: function () {
+            if (LocaleDBExtra.utils.isJsonStrigyfied(data)) {
+                fse.writeFileSync(LocaleDBExtra.paths.dbJson.path, data)
+            } else {
+                fse.writeFileSync(LocaleDBExtra.paths.dbJson.path, JSON.stringify(data))
+            }
+        }
+    };
+}
+
+LocaleDBExtra.utils.delayer = (ms) => {
+    return new Promise(resolve => {
+        setTimeout(() => {
+            resolve(null);
+        }, ms);
+    })
+}
+
+LocaleDBExtra.utils.isJsonStrigyfied = (str) => {
+    try {
+        JSON.parse(str);
+    } catch (e) {
+        return false;
+    }
+    return true;
+}
+
 
 
 export = LocaleDBExtra;

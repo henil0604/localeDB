@@ -13,18 +13,26 @@ interface LocaleDBExtraInterface {
   createFileSystemWorkflow?: Function;
   setPaths?: Function;
   paths?: LocaleDBExtraPathsInterface;
+  getDBdata?: Function;
+  updateDbData?: Function;
+  utils?: LocaleDBExtraUtilsInterface;
+}
+
+interface LocaleDBExtraUtilsInterface {
+  delayer?: Function;
+  isJsonStrigyfied?: Function;
 }
 
 interface LocaleDBExtraPathsInterface {
   dbFolder?: LocaleDBPathInterface;
-  stagesFolder?: LocaleDBPathInterface;
+  dbsFolder?: LocaleDBPathInterface;
   dbJson?: LocaleDBPathInterface;
 }
 
 interface LocaleDBConfig {
   dbFolderName?: string;
   dbFolderHidden?: boolean;
-  stagesFolderName?: string;
+  dbsFolder?: string;
 }
 
 interface LocaleDBExtraDataInterface {

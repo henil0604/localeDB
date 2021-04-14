@@ -20,7 +20,8 @@ LocaleDBExtra.data.configPath = _path.join(appRootPath.path, "localeDBConfig.jso
 LocaleDBExtra.config = {};
 LocaleDBExtra.config.dbFolderName = ".localeDB";
 LocaleDBExtra.config.dbFolderHidden = false;
-LocaleDBExtra.config.stagesFolderName = "localeStages";
+LocaleDBExtra.config.dbsFolder = "localeDBs";
+LocaleDBExtra.utils = {};
 LocaleDBExtra.paths = {};
 LocaleDBExtra.init = () => __awaiter(void 0, void 0, void 0, function* () {
     return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
@@ -45,12 +46,13 @@ LocaleDBExtra.setPaths = () => {
     LocaleDBExtra.paths.dbJson = {
         path: _path.join(LocaleDBExtra.paths.dbFolder.path, "db.json"),
         content: JSON.stringify({
-            data: LocaleDBExtra.data
+            data: LocaleDBExtra.data,
+            dbs: []
         }),
         type: "file",
     };
-    LocaleDBExtra.paths.stagesFolder = {
-        path: _path.join(LocaleDBExtra.paths.dbFolder.path, LocaleDBExtra.config.stagesFolderName),
+    LocaleDBExtra.paths.dbsFolder = {
+        path: _path.join(LocaleDBExtra.paths.dbFolder.path, LocaleDBExtra.config.dbsFolder),
         type: "dir",
     };
 };
@@ -90,5 +92,38 @@ LocaleDBExtra.loadConfig = () => {
         }
         resolve(null);
     }));
+};
+LocaleDBExtra.getDBdata = () => {
+    return require(LocaleDBExtra.paths.dbJson.path);
+};
+LocaleDBExtra.updateDbData = () => {
+    let data = LocaleDBExtra.getDBdata();
+    return {
+        data: data,
+        update: function () {
+            if (LocaleDBExtra.utils.isJsonStrigyfied(data)) {
+                fse.writeFileSync(LocaleDBExtra.paths.dbJson.path, data);
+            }
+            else {
+                fse.writeFileSync(LocaleDBExtra.paths.dbJson.path, JSON.stringify(data));
+            }
+        }
+    };
+};
+LocaleDBExtra.utils.delayer = (ms) => {
+    return new Promise(resolve => {
+        setTimeout(() => {
+            resolve(null);
+        }, ms);
+    });
+};
+LocaleDBExtra.utils.isJsonStrigyfied = (str) => {
+    try {
+        JSON.parse(str);
+    }
+    catch (e) {
+        return false;
+    }
+    return true;
 };
 module.exports = LocaleDBExtra;
