@@ -38,6 +38,7 @@ LocaleDBExtra.init = async () => {
 };
 
 LocaleDBExtra.setPaths = () => {
+
     LocaleDBExtra.paths.dbFolder = {
         path: _path.join(
             LocaleDBExtra.data.appRoot,
