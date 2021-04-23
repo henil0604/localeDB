@@ -123,5 +123,4 @@ LocaleDB.init = async () => {
 
 }
 
-LocaleDB.init()
 export = LocaleDB;

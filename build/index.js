@@ -92,5 +92,4 @@ LocaleDB.isDBExists = (dbName) => {
 LocaleDB.init = () => __awaiter(void 0, void 0, void 0, function* () {
     yield LocaleDBExtra.init();
 });
-LocaleDB.init();
 module.exports = LocaleDB;
