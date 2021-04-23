@@ -45,6 +45,9 @@ module.exports = class DB {
         }));
     }
     isStageExists(stageName) {
+        if (stageName == undefined) {
+            return null;
+        }
         return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
             let folderExists = yield snet_core.fs.isExist(path.join(this._paths.stages, stageName));
             let stageJsonFileExists = yield snet_core.fs.isExist(path.join(this._paths.stages, stageName, "stage.json"));
@@ -52,6 +55,9 @@ module.exports = class DB {
         }));
     }
     createStage(stageName) {
+        if (stageName == undefined) {
+            return null;
+        }
         return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
             if (!(yield this.isStageExists(stageName))) {
                 let stageFolder = path.join(this._paths.stages, stageName);
@@ -90,6 +96,9 @@ module.exports = class DB {
         }));
     }
     deleteStage(stageName) {
+        if (stageName == undefined) {
+            return null;
+        }
         return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
             if (yield this.isStageExists(stageName)) {
                 let stageFolder = path.join(this._paths.stages, stageName);
@@ -116,12 +125,14 @@ module.exports = class DB {
         }));
     }
     addData(stageName, data, _checkStageExists = true) {
+        if (stageName == undefined || data == undefined || _checkStageExists == undefined) {
+            return null;
+        }
         return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
             if (yield this.isStageExists(stageName)) {
                 data.dataId = snet_core.utils.randomToken(20);
                 let dataFile = path.join(this._paths.stages, stageName, "data.json");
                 let update = LocaleDBExtra.utils.updateJsonFile(dataFile);
-                console.log(update.data.data);
                 update.data.data.push(data);
                 update.update();
                 let updateStageJsonLastModified = LocaleDBExtra.utils.updateJsonFile(path.join(this._paths.stages, stageName, "stage.json"));
@@ -139,6 +150,9 @@ module.exports = class DB {
         }));
     }
     getStageData(stageName) {
+        if (stageName == undefined) {
+            return null;
+        }
         return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
             if (yield this.isStageExists(stageName)) {
                 let dataFile = path.join(this._paths.stages, stageName, "data.json");
@@ -153,6 +167,43 @@ module.exports = class DB {
                     status: "error",
                     message: "Stage Does not Exists"
                 });
+            }
+        }));
+    }
+    deleteDataById(stageName, dataId) {
+        if (stageName == undefined || dataId == undefined) {
+            return null;
+        }
+        return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
+            let data = yield this.getStageData(stageName);
+            if (data.status == "success") {
+                if (data.result.length > 0) {
+                    let deletedData;
+                    for (let i = 0; i < data.result.length; i++) {
+                        let d = data.result[i];
+                        if (d.dataId == dataId) {
+                            data.result.splice(i, 1);
+                            let dataFile = path.join(this._paths.stages, stageName, "data.json");
+                            let update = LocaleDBExtra.utils.updateJsonFile(dataFile);
+                            update.data.data = data.result;
+                            update.update();
+                            deletedData = d;
+                        }
+                    }
+                    resolve({
+                        status: "success",
+                        result: deletedData
+                    });
+                }
+                else {
+                    resolve({
+                        status: "error",
+                        message: "No Data Found."
+                    });
+                }
+            }
+            else {
+                resolve(data);
             }
         }));
     }

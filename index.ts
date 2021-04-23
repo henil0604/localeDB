@@ -111,16 +111,20 @@ LocaleDB.init = async () => {
     // await con.createStage("users")
     // // await con.deleteStage("users")
 
-    // await con.addData("users", {
+    // let id = await con.addData("users", {
     //     username: "henil0604",
     //     password: "12345"
     // })
 
-    // console.log(await con.getStageData("users"))
+    // id = id.dataId;
 
+    // await snet_core.utils.delayer(5000)
+    // console.log(await con.deleteDataById("users", id))
 
     // console.log(con)
 
 }
 
+
+LocaleDB.init()
 export = LocaleDB;

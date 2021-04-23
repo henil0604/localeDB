@@ -54,6 +54,9 @@ export = class DB implements LocaleDBClassesDB {
     }
 
     isStageExists(stageName) {
+        if (stageName == undefined) {
+            return null;
+        }
         return new Promise(async resolve => {
 
             let folderExists = await snet_core.fs.isExist(path.join(this._paths.stages, stageName));
@@ -64,6 +67,9 @@ export = class DB implements LocaleDBClassesDB {
     }
 
     createStage(stageName) {
+        if (stageName == undefined) {
+            return null;
+        }
         return new Promise(async resolve => {
 
             if (!await this.isStageExists(stageName)) {
@@ -113,6 +119,9 @@ export = class DB implements LocaleDBClassesDB {
     }
 
     deleteStage(stageName) {
+        if (stageName == undefined) {
+            return null;
+        }
         return new Promise(async resolve => {
 
             if (await this.isStageExists(stageName)) {
@@ -145,6 +154,9 @@ export = class DB implements LocaleDBClassesDB {
     }
 
     addData(stageName, data, _checkStageExists = true) {
+        if (stageName == undefined || data == undefined || _checkStageExists == undefined) {
+            return null;
+        }
         return new Promise(async resolve => {
             if (await this.isStageExists(stageName)) {
 
@@ -153,7 +165,6 @@ export = class DB implements LocaleDBClassesDB {
                 let dataFile = path.join(this._paths.stages, stageName, "data.json");
 
                 let update = LocaleDBExtra.utils.updateJsonFile(dataFile);
-                console.log(update.data.data)
                 update.data.data.push(data);
                 update.update();
 
@@ -174,10 +185,14 @@ export = class DB implements LocaleDBClassesDB {
         })
     }
 
-    getStageData(stageName) {
+    getStageData(stageName): Promise<LocaleDBPromiseDefaultResponse> {
+        if (stageName == undefined) {
+            return null;
+        }
         return new Promise(async resolve => {
 
             if (await this.isStageExists(stageName)) {
+
 
                 let dataFile = path.join(this._paths.stages, stageName, "data.json");
 
@@ -193,6 +208,52 @@ export = class DB implements LocaleDBClassesDB {
                     status: "error",
                     message: "Stage Does not Exists"
                 })
+            }
+        })
+    }
+
+    deleteDataById(stageName, dataId): Promise<LocaleDBPromiseDefaultResponse> {
+        if (stageName == undefined || dataId == undefined) {
+            return null;
+        }
+        return new Promise(async resolve => {
+
+            let data = await this.getStageData(stageName);
+            if (data.status == "success") {
+
+                if (data.result.length > 0) {
+                    let deletedData;
+
+                    for (let i = 0; i < data.result.length; i++) {
+                        let d = data.result[i];
+
+                        if (d.dataId == dataId) {
+
+                            data.result.splice(i, 1);
+
+                            let dataFile = path.join(this._paths.stages, stageName, "data.json");
+
+                            let update = LocaleDBExtra.utils.updateJsonFile(dataFile);
+                            update.data.data = data.result;
+                            update.update()
+                            deletedData = d;
+                        }
+                    }
+
+                    resolve({
+                        status: "success",
+                        result: deletedData
+                    })
+
+                } else {
+                    resolve({
+                        status: "error",
+                        message: "No Data Found."
+                    })
+                }
+
+            } else {
+                resolve(data)
             }
         })
     }
