@@ -102,27 +102,7 @@ LocaleDB.isDBExists = (dbName: string) => {
 
 
 LocaleDB.init = async () => {
-
     await LocaleDBExtra.init()
-
-    // let con: LocaleDBClassesDB = await LocaleDB.ConnectDb("wispychat")
-
-    // await con.init()
-    // await con.createStage("users")
-    // // await con.deleteStage("users")
-
-    // let id = await con.addData("users", {
-    //     username: "henil0604",
-    //     password: "12345"
-    // })
-
-    // id = id.dataId;
-
-    // await snet_core.utils.delayer(5000)
-    // console.log(await con.deleteDataById("users", id))
-
-    // console.log(con)
-
 }
 
 

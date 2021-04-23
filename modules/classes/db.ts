@@ -233,9 +233,18 @@ export = class DB implements LocaleDBClassesDB {
 
                             let dataFile = path.join(this._paths.stages, stageName, "data.json");
 
+                            let updateStageJsonLastModified = LocaleDBExtra.utils.updateJsonFile(path.join(this._paths.stages, stageName, "stage.json"));
+                            updateStageJsonLastModified.data.lastModified = Date.now()
+                            updateStageJsonLastModified.update()
+
+                            let updateDbJsonLastModified = LocaleDBExtra.utils.updateJsonFile(this._paths.jsonFile);
+                            updateDbJsonLastModified.data.lastModified = Date.now()
+                            updateDbJsonLastModified.update()
+
                             let update = LocaleDBExtra.utils.updateJsonFile(dataFile);
                             update.data.data = data.result;
                             update.update()
+
                             deletedData = d;
                         }
                     }
@@ -252,6 +261,38 @@ export = class DB implements LocaleDBClassesDB {
                     })
                 }
 
+            } else {
+                resolve(data)
+            }
+        })
+    }
+
+    getDataById(stageName, dataId): Promise<LocaleDBPromiseDefaultResponse> {
+        if (stageName == undefined || dataId == undefined) {
+            return null;
+        }
+
+        return new Promise(async resolve => {
+            let data = await this.getStageData(stageName);
+            if (data.status == "success") {
+                if (data.result.length > 0) {
+                    for (let i = 0; i < data.result.length; i++) {
+                        let d = data.result[i];
+
+                        if (d.dataId == dataId) {
+                            resolve({
+                                status: "success",
+                                result: d
+                            })
+                        }
+                    }
+
+                } else {
+                    resolve({
+                        status: "error",
+                        message: "No Data Found."
+                    })
+                }
             } else {
                 resolve(data)
             }
