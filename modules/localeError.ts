@@ -1,3 +1,5 @@
+import { exit } from "process";
+
 let colors = require("colors");
 
 export = class LocaleError {
@@ -12,6 +14,10 @@ export = class LocaleError {
 
         if (this.data.log) {
             this.show();
+        }
+
+        if (this.data.exit) {
+            exit()
         }
     }
 

@@ -143,6 +143,20 @@ LocaleDBExtra.utils.delayer = (ms) => {
     })
 }
 
+LocaleDBExtra.utils.updateJsonFile = (path) => {
+    let data = require(path);
+    return {
+        data: data,
+        update: function () {
+            if (LocaleDBExtra.utils.isJsonStrigyfied(data)) {
+                fse.writeFileSync(path, data)
+            } else {
+                fse.writeFileSync(path, JSON.stringify(data))
+            }
+        }
+    };
+}
+
 LocaleDBExtra.utils.isJsonStrigyfied = (str) => {
     try {
         JSON.parse(str);

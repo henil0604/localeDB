@@ -4,7 +4,9 @@
   "description": "localedb is an Npm Package Which can Make Database In Your Local Storage.",
   "main": "./build/index.js",
   "scripts": {
-    "dev": "concurrently \"tsc --watch\" \"nodemon {main}\""
+    "dev": "concurrently \"tsc --watch\" \"nodemon {main} --ignore '*.json'\"",
+    "tsc": "tsc --watch",
+    "main": "nodemon {main} --ignore *.json"
   },
   "repository": {
     "type": "git",

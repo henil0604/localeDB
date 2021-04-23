@@ -1,4 +1,5 @@
 "use strict";
+const process_1 = require("process");
 let colors = require("colors");
 module.exports = class LocaleError {
     constructor(data) {
@@ -8,6 +9,9 @@ module.exports = class LocaleError {
         this.data.log = data.log == undefined ? true : data.log;
         if (this.data.log) {
             this.show();
+        }
+        if (this.data.exit) {
+            process_1.exit();
         }
     }
     show() {

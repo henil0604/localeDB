@@ -1,4 +1,4 @@
-import { exit } from "process";
+import localeDBExtra = require("./modules/localeDBExtra");
 
 let fs = require("fs");
 const fse = require("fs-extra");
@@ -6,36 +6,51 @@ const _path = require("path");
 const hideFile = require("hidefile");
 let snet_core = require("snet_core");
 require("./modules/interface");
+let Classes: LocaleDBVarsClasses = {};
+Classes.DB = require("./modules/classes/db");
 let LocaleError = require("./modules/localeError");
 
 let LocaleDB: LocaleDBInterface = {};
 let LocaleDBExtra: LocaleDBExtraInterface = require("./modules/localeDBExtra");
 
-LocaleDB.Connection = (
-    options: LocaleDBConnectionOptionsInterface
-): LocaleDBConnection => {
-    return {};
+LocaleDB.ConnectDb = (dbName: string) => {
+    return new Promise(async resolve => {
+
+        if (await LocaleDB.isDBExists(dbName)) {
+            resolve(await new Classes.DB(dbName));
+        } else {
+            await LocaleDB.createDB(dbName);
+            resolve(await LocaleDB.ConnectDb(dbName))
+        }
+    })
 };
 
 LocaleDB.createDB = (dbName: string) => {
-    return new Promise((resolve) => {
+    return new Promise(async (resolve) => {
+        if (!(await LocaleDB.isDBExists(dbName))) {
 
-        if (!LocaleDB.isDBExists(dbName)) {
+            await snet_core.fs.createDir(_path.join(LocaleDBExtra.paths.dbsFolder.path, dbName));
+            let dbJSONObj = {
+                dbName: dbName,
+                id: snet_core.utils.randomToken(20),
+                timestamp: Date.now(),
+                lastModified: Date.now(),
+                stages: []
+            }
 
-            fse.mkdir(_path.join(LocaleDBExtra.paths.dbsFolder.path, dbName));
-            fse.writeFileSync(
+
+            await snet_core.fs.writeFile(
                 _path.join(LocaleDBExtra.paths.dbsFolder.path, dbName, "db.json"),
-                JSON.stringify(
-                    {
-                        dbName: dbName,
-                        id: snet_core.utils.randomToken(20),
-                        timestamp: Date.now(),
-                        lastModified: Date.now(),
-                        stages: []
-                    }
-                )
+                JSON.stringify(dbJSONObj)
             )
-            fse.mkdir(_path.join(LocaleDBExtra.paths.dbsFolder.path, dbName, "stages"));
+
+            await snet_core.fs.createDir(_path.join(LocaleDBExtra.paths.dbsFolder.path, dbName, "stages"));
+
+            let update = localeDBExtra.updateDbData();
+            update.data.dbs.push(dbJSONObj)
+            update.update()
+
+            resolve(new Classes.DB(dbName))
 
         } else {
             resolve(new LocaleError({
@@ -48,10 +63,25 @@ LocaleDB.createDB = (dbName: string) => {
 
 LocaleDB.deleteDB = (dbName: string) => {
     return new Promise(async resolve => {
-        if (LocaleDB.isDBExists()) {
+        if (await LocaleDB.isDBExists(dbName)) {
             await snet_core.fs.deleteDir(
                 _path.join(LocaleDBExtra.paths.dbsFolder.path, dbName)
             )
+
+            let update = localeDBExtra.updateDbData();
+            for (let i = 0; i < update.data.dbs.length; i++) {
+                let dbData = update.data.dbs[i];
+
+                if (dbData.dbName == dbName) {
+                    update.data.dbs.splice(i, 1)
+                }
+            }
+            update.update()
+
+            resolve({
+                status: "success",
+                message: "Deleted Successfully"
+            })
         } else {
             resolve(new LocaleError({
                 error: "Database Doesn't Exists",
@@ -61,16 +91,36 @@ LocaleDB.deleteDB = (dbName: string) => {
     })
 }
 
-LocaleDB.isDBExists = (dbName: string): boolean => {
-    return fse.existsSync(_path.join(LocaleDBExtra.paths.dbsFolder.path, dbName)) && fse.existsSync(_path.join(LocaleDBExtra.paths.dbsFolder.path, dbName, "db.json"));
+LocaleDB.isDBExists = (dbName: string) => {
+    return new Promise(async (resolve) => {
+        let folderExists = await snet_core.fs.isExist(_path.join(LocaleDBExtra.paths.dbsFolder.path, dbName));
+        let dbFileExists = await snet_core.fs.isExist(_path.join(LocaleDBExtra.paths.dbsFolder.path, dbName, "db.json"));
+
+        resolve(folderExists && dbFileExists)
+    })
 };
 
 
 LocaleDB.init = async () => {
+
     await LocaleDBExtra.init()
 
-    // console.log(await LocaleDB.createDB("wispychat"))
-    // console.log(await LocaleDB.deleteDB("wispychat"))
+    // let con: LocaleDBClassesDB = await LocaleDB.ConnectDb("wispychat")
+
+    // await con.init()
+    // await con.createStage("users")
+    // // await con.deleteStage("users")
+
+    // await con.addData("users", {
+    //     username: "henil0604",
+    //     password: "12345"
+    // })
+
+    // console.log(await con.getStageData("users"))
+
+
+    // console.log(con)
+
 }
 
 LocaleDB.init()

@@ -1,5 +1,5 @@
 interface LocaleDBInterface {
-    Connection?: Function;
+    ConnectDb?: Function;
     createDB?: Function;
     isDBExists?: Function;
     init?: Function;
@@ -23,6 +23,7 @@ interface LocaleDBExtraInterface {
 interface LocaleDBExtraUtilsInterface {
     delayer?: Function;
     isJsonStrigyfied?: Function;
+    updateJsonFile?: Function;
 }
 
 interface LocaleDBExtraPathsInterface {
@@ -42,13 +43,6 @@ interface LocaleDBExtraDataInterface {
     configPath?: string;
 }
 
-interface LocaleDBConnectionOptionsInterface {
-    dbName: String;
-    stageName: String;
-}
-
-interface LocaleDBConnection { }
-
 interface LocaleDBPathInterface {
     path?: string;
     type?: "dir" | "file";
@@ -60,4 +54,29 @@ interface LocaleErrorDataInterface {
     error?: string | object;
     timestamp?: number;
     log?: boolean;
+    exit?: boolean;
+}
+
+interface LocaleDBVarsClasses {
+    DB?;
+}
+interface LocaleDBClassesDB {
+    dbName?: string;
+    _temp?: object;
+    info?: any;
+    _paths?: LocaleDBClassesDBPaths;
+    init?: Function;
+    getDbInfo?: Function;
+    refreshDbInfo?: Function;
+    isStageExists?: Function;
+    createStage?: Function;
+    deleteStage?: Function;
+    addData?: Function;
+    getStageData?: Function;
+}
+
+interface LocaleDBClassesDBPaths {
+    db?: string;
+    jsonFile?: string;
+    stages?: string;
 }
