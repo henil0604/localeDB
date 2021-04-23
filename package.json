@@ -28,7 +28,7 @@
     "fs-extra": "^9.1.0",
     "fswin": "^3.21.107",
     "hidefile": "^3.0.0",
-    "snet_core": "^1.2.1"
+    "snet_core": "^1.2.2"
   },
   "devDependencies": {
     "@types/node": "^7.10.14"
