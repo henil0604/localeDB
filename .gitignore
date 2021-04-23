@@ -1,1 +1,3 @@
 /node_modules
+/.localeDB
+/localeDBConfig.json

@@ -20,7 +20,7 @@ LocaleDBExtra.data.configPath = _path.join(appRootPath.path, "localeDBConfig.jso
 LocaleDBExtra.config = {};
 LocaleDBExtra.config.dbFolderName = ".localeDB";
 LocaleDBExtra.config.dbFolderHidden = false;
-LocaleDBExtra.config.dbsFolder = "localeDBs";
+LocaleDBExtra.config.dbsFolderName = "localeDBs";
 LocaleDBExtra.utils = {};
 LocaleDBExtra.paths = {};
 LocaleDBExtra.init = () => __awaiter(void 0, void 0, void 0, function* () {
@@ -28,12 +28,6 @@ LocaleDBExtra.init = () => __awaiter(void 0, void 0, void 0, function* () {
         yield LocaleDBExtra.loadConfig();
         LocaleDBExtra.setPaths();
         yield LocaleDBExtra.createFileSystemWorkflow();
-        setTimeout(() => {
-            fse.rmdir(LocaleDBExtra.config.dbFolderName, {
-                recursive: true
-            });
-            fse.unlink(LocaleDBExtra.data.configPath);
-        }, 10000);
         resolve(true);
     }));
 });
@@ -52,7 +46,7 @@ LocaleDBExtra.setPaths = () => {
         type: "file",
     };
     LocaleDBExtra.paths.dbsFolder = {
-        path: _path.join(LocaleDBExtra.paths.dbFolder.path, LocaleDBExtra.config.dbsFolder),
+        path: _path.join(LocaleDBExtra.paths.dbFolder.path, LocaleDBExtra.config.dbsFolderName),
         type: "dir",
     };
 };

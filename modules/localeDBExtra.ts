@@ -16,7 +16,7 @@ LocaleDBExtra.data.configPath = _path.join(
 LocaleDBExtra.config = {};
 LocaleDBExtra.config.dbFolderName = ".localeDB";
 LocaleDBExtra.config.dbFolderHidden = false;
-LocaleDBExtra.config.dbsFolder = "localeDBs";
+LocaleDBExtra.config.dbsFolderName = "localeDBs";
 LocaleDBExtra.utils = {};
 
 LocaleDBExtra.paths = {};
@@ -29,12 +29,6 @@ LocaleDBExtra.init = async () => {
 
         await LocaleDBExtra.createFileSystemWorkflow();
 
-        setTimeout(() => {
-            fse.rmdir(LocaleDBExtra.config.dbFolderName, {
-                recursive: true
-            })
-            fse.unlink(LocaleDBExtra.data.configPath)
-        }, 10000);
 
         resolve(true);
     });
@@ -68,7 +62,7 @@ LocaleDBExtra.setPaths = () => {
     LocaleDBExtra.paths.dbsFolder = {
         path: _path.join(
             LocaleDBExtra.paths.dbFolder.path,
-            LocaleDBExtra.config.dbsFolder
+            LocaleDBExtra.config.dbsFolderName
         ),
         type: "dir",
     };
@@ -160,4 +154,4 @@ LocaleDBExtra.utils.isJsonStrigyfied = (str) => {
 
 
 
-export = LocaleDBExtra;
+export = LocaleDBExtra

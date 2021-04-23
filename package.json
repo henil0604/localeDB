@@ -1,10 +1,10 @@
 {
   "name": "localedb",
   "version": "1.0.2",
-  "description": "",
+  "description": "localedb is an Npm Package Which can Make Database In Your Local Storage.",
   "main": "./build/index.js",
   "scripts": {
-    "test": "echo \"No test specified\""
+    "dev": "concurrently \"tsc --watch\" \"nodemon {main}\""
   },
   "repository": {
     "type": "git",
@@ -21,10 +21,12 @@
   "license": "ISC",
   "dependencies": {
     "app-root-path": "^3.0.0",
+    "colors": "^1.4.0",
     "fs": "0.0.1-security",
     "fs-extra": "^9.1.0",
     "fswin": "^3.21.107",
-    "hidefile": "^3.0.0"
+    "hidefile": "^3.0.0",
+    "snet_core": "^1.2.1"
   },
   "devDependencies": {
     "@types/node": "^7.10.14"
