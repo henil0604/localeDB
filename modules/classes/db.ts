@@ -301,6 +301,8 @@ export = class DB implements LocaleDBClassesDB {
             update.data.data = [];
             update.update()
 
+            this._updateTimestamps(stageName)
+
             resolve({
                 status: "success",
                 message: "Successfuly Cleared Stage"

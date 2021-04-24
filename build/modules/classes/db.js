@@ -242,6 +242,11 @@ module.exports = class DB {
             let update = LocaleDBExtra.utils.updateJsonFile(stageDataJsonPath);
             update.data.data = [];
             update.update();
+            this._updateTimestamps(stageName);
+            resolve({
+                status: "success",
+                message: "Successfuly Cleared Stage"
+            });
         }));
     }
     _updateTimestamps(stageName = null) {
