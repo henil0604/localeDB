@@ -80,6 +80,7 @@ module.exports = class DB {
                 let updateDbJsonFile = LocaleDBExtra.utils.updateJsonFile(this._paths.jsonFile);
                 updateDbJsonFile.data.stages.push(stageJsonObj);
                 updateDbJsonFile.update();
+                yield this._updateTimestamps();
                 this.refreshDbInfo();
                 resolve({
                     status: "success",
@@ -111,6 +112,7 @@ module.exports = class DB {
                     }
                 }
                 updateDbFile.update();
+                yield this._updateTimestamps();
                 resolve({
                     status: "success",
                     result: "Successfuly Deleted Stage"
@@ -135,12 +137,7 @@ module.exports = class DB {
                 let update = LocaleDBExtra.utils.updateJsonFile(dataFile);
                 update.data.data.push(data);
                 update.update();
-                let updateStageJsonLastModified = LocaleDBExtra.utils.updateJsonFile(path.join(this._paths.stages, stageName, "stage.json"));
-                updateStageJsonLastModified.data.lastModified = Date.now();
-                updateStageJsonLastModified.update();
-                let updateDbJsonLastModified = LocaleDBExtra.utils.updateJsonFile(this._paths.jsonFile);
-                updateDbJsonLastModified.data.lastModified = Date.now();
-                updateDbJsonLastModified.update();
+                yield this._updateTimestamps(stageName);
                 resolve(data);
             }
             else {
@@ -184,15 +181,10 @@ module.exports = class DB {
                         if (d.dataId == dataId) {
                             data.result.splice(i, 1);
                             let dataFile = path.join(this._paths.stages, stageName, "data.json");
-                            let updateStageJsonLastModified = LocaleDBExtra.utils.updateJsonFile(path.join(this._paths.stages, stageName, "stage.json"));
-                            updateStageJsonLastModified.data.lastModified = Date.now();
-                            updateStageJsonLastModified.update();
-                            let updateDbJsonLastModified = LocaleDBExtra.utils.updateJsonFile(this._paths.jsonFile);
-                            updateDbJsonLastModified.data.lastModified = Date.now();
-                            updateDbJsonLastModified.update();
                             let update = LocaleDBExtra.utils.updateJsonFile(dataFile);
                             update.data.data = data.result;
                             update.update();
+                            yield this._updateTimestamps(stageName);
                             deletedData = d;
                         }
                     }
@@ -241,6 +233,30 @@ module.exports = class DB {
             else {
                 resolve(data);
             }
+        }));
+    }
+    clearStage(stageName) {
+        return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
+            let stageDataJsonPath = path.join(this._paths.stages, stageName, "data.json");
+            let update = LocaleDBExtra.utils.updateJsonFile(stageDataJsonPath);
+            update.data.data = [];
+            update.update();
+        }));
+    }
+    _updateTimestamps(stageName = null) {
+        return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
+            if (stageName != null) {
+                let updateStageJsonLastModified = LocaleDBExtra.utils.updateJsonFile(path.join(this._paths.stages, stageName, "stage.json"));
+                updateStageJsonLastModified.data.lastModified = Date.now();
+                updateStageJsonLastModified.update();
+            }
+            let updateDbJsonLastModified = LocaleDBExtra.utils.updateJsonFile(this._paths.jsonFile);
+            updateDbJsonLastModified.data.lastModified = Date.now();
+            updateDbJsonLastModified.update();
+            resolve({
+                status: "success",
+                message: "Successfuly Updated Timestamp"
+            });
         }));
     }
 };

@@ -102,6 +102,8 @@ export = class DB implements LocaleDBClassesDB {
                 updateDbJsonFile.data.stages.push(stageJsonObj);
                 updateDbJsonFile.update()
 
+                await this._updateTimestamps()
+
                 this.refreshDbInfo()
                 resolve({
                     status: "success",
@@ -139,6 +141,8 @@ export = class DB implements LocaleDBClassesDB {
                 }
                 updateDbFile.update()
 
+                await this._updateTimestamps()
+
                 resolve({
                     status: "success",
                     result: "Successfuly Deleted Stage"
@@ -168,13 +172,8 @@ export = class DB implements LocaleDBClassesDB {
                 update.data.data.push(data);
                 update.update();
 
-                let updateStageJsonLastModified = LocaleDBExtra.utils.updateJsonFile(path.join(this._paths.stages, stageName, "stage.json"));
-                updateStageJsonLastModified.data.lastModified = Date.now()
-                updateStageJsonLastModified.update()
+                await this._updateTimestamps(stageName)
 
-                let updateDbJsonLastModified = LocaleDBExtra.utils.updateJsonFile(this._paths.jsonFile);
-                updateDbJsonLastModified.data.lastModified = Date.now()
-                updateDbJsonLastModified.update()
 
                 resolve(data)
 
@@ -233,18 +232,11 @@ export = class DB implements LocaleDBClassesDB {
 
                             let dataFile = path.join(this._paths.stages, stageName, "data.json");
 
-                            let updateStageJsonLastModified = LocaleDBExtra.utils.updateJsonFile(path.join(this._paths.stages, stageName, "stage.json"));
-                            updateStageJsonLastModified.data.lastModified = Date.now()
-                            updateStageJsonLastModified.update()
-
-                            let updateDbJsonLastModified = LocaleDBExtra.utils.updateJsonFile(this._paths.jsonFile);
-                            updateDbJsonLastModified.data.lastModified = Date.now()
-                            updateDbJsonLastModified.update()
-
                             let update = LocaleDBExtra.utils.updateJsonFile(dataFile);
                             update.data.data = data.result;
                             update.update()
 
+                            await this._updateTimestamps(stageName)
                             deletedData = d;
                         }
                     }
@@ -296,6 +288,37 @@ export = class DB implements LocaleDBClassesDB {
             } else {
                 resolve(data)
             }
+        })
+    }
+
+    clearStage(stageName): Promise<LocaleDBPromiseDefaultResponse> {
+        return new Promise(async resolve => {
+
+            let stageDataJsonPath = path.join(this._paths.stages, stageName, "data.json")
+
+            let update = LocaleDBExtra.utils.updateJsonFile(stageDataJsonPath);
+            update.data.data = [];
+            update.update()
+
+        })
+    }
+
+    _updateTimestamps(stageName = null): Promise<LocaleDBPromiseDefaultResponse> {
+        return new Promise(async resolve => {
+            if (stageName != null) {
+                let updateStageJsonLastModified = LocaleDBExtra.utils.updateJsonFile(path.join(this._paths.stages, stageName, "stage.json"));
+                updateStageJsonLastModified.data.lastModified = Date.now()
+                updateStageJsonLastModified.update()
+            }
+
+            let updateDbJsonLastModified = LocaleDBExtra.utils.updateJsonFile(this._paths.jsonFile);
+            updateDbJsonLastModified.data.lastModified = Date.now()
+            updateDbJsonLastModified.update()
+
+            resolve({
+                status: "success",
+                message: "Successfuly Updated Timestamp"
+            })
         })
     }
 }

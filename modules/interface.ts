@@ -74,6 +74,7 @@ interface LocaleDBClassesDB {
     addData?: Function;
     getStageData?: Function;
     deleteDataById?: Function;
+    clearStage?: Function;
 }
 
 interface LocaleDBClassesDBPaths {
@@ -83,7 +84,7 @@ interface LocaleDBClassesDBPaths {
 }
 
 interface LocaleDBPromiseDefaultResponse {
-    status?: string;
+    status: string;
     message?: any;
     result?: any[] | object[];
 }
