@@ -47,7 +47,7 @@ LocaleDB.createDB = (dbName) => {
             let update = localeDBExtra.updateDbData();
             update.data.dbs.push(dbJSONObj);
             update.update();
-            resolve(new Classes.DB(dbName));
+            resolve(yield LocaleDB.ConnectDb(dbName));
         }
         else {
             resolve(new LocaleError({
