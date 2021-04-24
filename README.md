@@ -31,20 +31,20 @@ await conn.init();
 await conn.createStage("users");
 
 // Adding Data to Stage
-let User = conn.addData("users", {
+let User = await conn.addData("users", {
     username: "Henil",
     email: "myemail@email.com",
     password: "itsSecret"
 })
 
 // Getting All Data From Stage
-let allUsers = conn.getStageData("users");
+let allUsers = await conn.getStageData("users");
 
 // Getting Data by dataId From Stage
-let user1 = conn.getDataById("users", User.dataId);
+let user1 = await conn.getDataById("users", User.dataId);
 
 // Deleting Particular Data From Stage By It's Id
-let user1Deleted = conn.deleteDataById("users", User.dataId);
+let user1Deleted = await conn.deleteDataById("users", User.dataId);
 
 // Delete Stage
 await conn.deleteStage("users");
