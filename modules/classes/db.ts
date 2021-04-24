@@ -99,6 +99,7 @@ export = class DB implements LocaleDBClassesDB {
                 }))
 
                 let updateDbJsonFile = LocaleDBExtra.utils.updateJsonFile(this._paths.jsonFile)
+                delete stageJsonObj.lastModified;
                 updateDbJsonFile.data.stages.push(stageJsonObj);
                 updateDbJsonFile.update()
 

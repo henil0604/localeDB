@@ -78,6 +78,7 @@ module.exports = class DB {
                     data: []
                 }));
                 let updateDbJsonFile = LocaleDBExtra.utils.updateJsonFile(this._paths.jsonFile);
+                delete stageJsonObj.lastModified;
                 updateDbJsonFile.data.stages.push(stageJsonObj);
                 updateDbJsonFile.update();
                 yield this._updateTimestamps();
