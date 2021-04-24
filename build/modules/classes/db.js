@@ -28,17 +28,17 @@ module.exports = class DB {
     init() {
         return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
             console.log("Initializing DB");
-            if (this._initialized == false) {
+            if (this._initialized == false || LocaleDBExtra._initialized == false) {
                 yield LocaleDBExtra.init();
                 this.info = yield this.getDbInfo();
             }
+            console.log(`Db: ${this._initialized}`);
             this._initialized = true;
             resolve(this);
         }));
     }
     getDbInfo() {
         return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
-            yield this.init();
             let path = `${LocaleDBExtra.paths.dbsFolder.path}/${this.dbName}/db.json`;
             let data = require(path);
             resolve(data);

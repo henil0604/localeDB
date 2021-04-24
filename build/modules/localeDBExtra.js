@@ -32,6 +32,7 @@ LocaleDBExtra.init = () => __awaiter(void 0, void 0, void 0, function* () {
             LocaleDBExtra.setPaths();
             yield LocaleDBExtra.createFileSystemWorkflow();
         }
+        console.log(`LocaleDBExtra: ${LocaleDBExtra._initialized}`);
         LocaleDBExtra._initialized = true;
         resolve(true);
     }));

@@ -29,10 +29,11 @@ export = class DB implements LocaleDBClassesDB {
     init() {
         return new Promise(async resolve => {
             console.log("Initializing DB")
-            if (this._initialized == false) {
+            if (this._initialized == false || LocaleDBExtra._initialized == false) {
                 await LocaleDBExtra.init()
                 this.info = await this.getDbInfo();
             }
+            console.log(`Db: ${this._initialized}`)
             this._initialized = true;
             resolve(this);
         })
@@ -40,7 +41,6 @@ export = class DB implements LocaleDBClassesDB {
 
     getDbInfo() {
         return new Promise(async (resolve) => {
-            await this.init();
             let path = `${LocaleDBExtra.paths.dbsFolder.path}/${this.dbName}/db.json`;
 
             let data = require(path);

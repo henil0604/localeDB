@@ -33,6 +33,7 @@ LocaleDBExtra.init = async () => {
 
             await LocaleDBExtra.createFileSystemWorkflow();
         }
+        console.log(`LocaleDBExtra: ${LocaleDBExtra._initialized}`)
         LocaleDBExtra._initialized = true;
         resolve(true);
     });
