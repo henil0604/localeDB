@@ -8,7 +8,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const localeDBExtra = require("./modules/localeDBExtra");
 let fs = require("fs");
 const fse = require("fs-extra");
 const _path = require("path");
@@ -44,7 +43,7 @@ LocaleDB.createDB = (dbName) => {
             };
             yield snet_core.fs.writeFile(_path.join(LocaleDBExtra.paths.dbsFolder.path, dbName, "db.json"), JSON.stringify(dbJSONObj));
             yield snet_core.fs.createDir(_path.join(LocaleDBExtra.paths.dbsFolder.path, dbName, "stages"));
-            let update = localeDBExtra.updateDbData();
+            let update = LocaleDBExtra.updateDbData();
             update.data.dbs.push(dbJSONObj);
             update.update();
             resolve(yield LocaleDB.ConnectDb(dbName));
@@ -61,7 +60,7 @@ LocaleDB.deleteDB = (dbName) => {
     return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
         if (yield LocaleDB.isDBExists(dbName)) {
             yield snet_core.fs.deleteDir(_path.join(LocaleDBExtra.paths.dbsFolder.path, dbName));
-            let update = localeDBExtra.updateDbData();
+            let update = LocaleDBExtra.updateDbData();
             for (let i = 0; i < update.data.dbs.length; i++) {
                 let dbData = update.data.dbs[i];
                 if (dbData.dbName == dbName) {

@@ -1,5 +1,3 @@
-import localeDBExtra = require("./modules/localeDBExtra");
-
 let fs = require("fs");
 const fse = require("fs-extra");
 const _path = require("path");
@@ -46,7 +44,7 @@ LocaleDB.createDB = (dbName: string): Promise<LocaleDBClassesDB> => {
 
             await snet_core.fs.createDir(_path.join(LocaleDBExtra.paths.dbsFolder.path, dbName, "stages"));
 
-            let update = localeDBExtra.updateDbData();
+            let update = LocaleDBExtra.updateDbData();
             update.data.dbs.push(dbJSONObj)
             update.update()
 
@@ -68,7 +66,7 @@ LocaleDB.deleteDB = (dbName: string): Promise<LocaleDBPromiseDefaultResponse | a
                 _path.join(LocaleDBExtra.paths.dbsFolder.path, dbName)
             )
 
-            let update = localeDBExtra.updateDbData();
+            let update = LocaleDBExtra.updateDbData();
             for (let i = 0; i < update.data.dbs.length; i++) {
                 let dbData = update.data.dbs[i];
 
