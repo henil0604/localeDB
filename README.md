@@ -12,20 +12,10 @@ npm i localedb
 let localeDb = require("localedb");
 ```
 
-## Initialization
-```js
-await localeDb.init();
-```
-This Initialization Will Generate All kind of Files and Folders in Your File System.
-
-
 ## Usage
 ```js
 // Creating Connection to Database
 let conn = await localeDb.ConnectDb("MyDatabase");
-
-// Initializing Connection
-await conn.init();
 
 // Creating Stage 
 await conn.createStage("users");
@@ -46,6 +36,9 @@ let user1 = await conn.getDataById("users", User.dataId);
 // Deleting Particular Data From Stage By It's Id
 let user1Deleted = await conn.deleteDataById("users", User.dataId);
 
+// Clearing All Data in Stage
+await conn.clearStage("users");
+
 // Delete Stage
 await conn.deleteStage("users");
 
@@ -56,7 +49,6 @@ await localeDb.deleteDB("MyDatabase");
 await localeDb.isDBExists("MyDatabase"); // false
 ```
 
-- Here ```conn.init()``` Will get the Database Info and Store it in Db Object
 - ```conn.createStage(<stageName>)``` Will Create Stage In Your Database Folder
 - ```conn.addData(<stageName>, <data>)``` will add the Data in Given Stage
 - ```conn.addData(<stageName>, <data>)``` Will Return JSON Object With it's own Unique ```dataId```
