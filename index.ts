@@ -13,7 +13,7 @@ let LocaleError = require("./modules/localeError");
 let LocaleDB: LocaleDBInterface = {};
 let LocaleDBExtra: LocaleDBExtraInterface = require("./modules/localeDBExtra");
 
-LocaleDB.ConnectDb = (dbName: string) => {
+LocaleDB.ConnectDb = (dbName: string): Promise<LocaleDBClassesDB> => {
     return new Promise(async resolve => {
 
         if (await LocaleDB.isDBExists(dbName)) {
@@ -25,7 +25,7 @@ LocaleDB.ConnectDb = (dbName: string) => {
     })
 };
 
-LocaleDB.createDB = (dbName: string) => {
+LocaleDB.createDB = (dbName: string): Promise<LocaleDBClassesDB> => {
     return new Promise(async (resolve) => {
         if (!(await LocaleDB.isDBExists(dbName))) {
 
@@ -50,7 +50,7 @@ LocaleDB.createDB = (dbName: string) => {
             update.data.dbs.push(dbJSONObj)
             update.update()
 
-            resolve(new Classes.DB(dbName))
+            resolve(await LocaleDB.ConnectDb(dbName))
 
         } else {
             resolve(new LocaleError({
@@ -61,7 +61,7 @@ LocaleDB.createDB = (dbName: string) => {
     })
 };
 
-LocaleDB.deleteDB = (dbName: string) => {
+LocaleDB.deleteDB = (dbName: string): Promise<LocaleDBPromiseDefaultResponse | any> => {
     return new Promise(async resolve => {
         if (await LocaleDB.isDBExists(dbName)) {
             await snet_core.fs.deleteDir(
@@ -91,7 +91,7 @@ LocaleDB.deleteDB = (dbName: string) => {
     })
 }
 
-LocaleDB.isDBExists = (dbName: string) => {
+LocaleDB.isDBExists = (dbName: string): Promise<boolean> => {
     return new Promise(async (resolve) => {
         let folderExists = await snet_core.fs.isExist(_path.join(LocaleDBExtra.paths.dbsFolder.path, dbName));
         let dbFileExists = await snet_core.fs.isExist(_path.join(LocaleDBExtra.paths.dbsFolder.path, dbName, "db.json"));
@@ -107,4 +107,4 @@ LocaleDB.init = async () => {
 
 
 LocaleDB.init()
-export = LocaleDB;
+export = LocaleDB
