@@ -55,3 +55,14 @@ await localeDb.deleteDB("MyDatabase");
 // Checking if Database Exists
 await localeDb.isDBExists("MyDatabase"); // false
 ```
+
+- Here ```conn.init()``` Will get the Database Info and Store it in Db Object
+- ```conn.createStage(<stageName>)``` Will Create Stage In Your Database Folder
+- ```conn.addData(<stageName>, <data>)``` will add the Data in Given Stage
+- ```conn.addData(<stageName>, <data>)``` Will Return JSON Object With it's own Unique ```dataId```
+- ```conn.getStageData(<stageName>)``` Will get all the Data from given Stage.
+- ```conn.getDataById(<stageName>, <dataId>)``` will get the data from Given Stage and find the data by its ```dataId```
+- ```conn.deleteDataById(<stageName>, <dataId>)``` will delete the Data from Given Stage By its ```dataId```
+- ```conn.deleteStage(<stageName>)``` will delete given Stage from Database Folder
+- ```localeDb.deleteDB(<dbName>)``` will delete Given Database From Db Folder
+- ```localeDb.isDBExists(<dbName>)``` will check if Database Exists in Db Folder. Returns ```true``` or ```false```.
