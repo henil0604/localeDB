@@ -165,7 +165,7 @@ export = class DB implements LocaleDBClassesDB {
         return new Promise(async resolve => {
             if (await this.isStageExists(stageName)) {
 
-                data.dataId = snet_core.utils.randomToken(20);
+                data.dataId = data.dataId == undefined ? snet_core.utils.randomToken(20) : data.dataId;
 
                 let dataFile = path.join(this._paths.stages, stageName, "data.json");
 
@@ -174,7 +174,6 @@ export = class DB implements LocaleDBClassesDB {
                 update.update();
 
                 await this._updateTimestamps(stageName)
-
 
                 resolve(data)
 

@@ -133,7 +133,7 @@ module.exports = class DB {
         }
         return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
             if (yield this.isStageExists(stageName)) {
-                data.dataId = snet_core.utils.randomToken(20);
+                data.dataId = data.dataId == undefined ? snet_core.utils.randomToken(20) : data.dataId;
                 let dataFile = path.join(this._paths.stages, stageName, "data.json");
                 let update = LocaleDBExtra.utils.updateJsonFile(dataFile);
                 update.data.data.push(data);
