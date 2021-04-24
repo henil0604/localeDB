@@ -28,12 +28,10 @@ export = class DB implements LocaleDBClassesDB {
 
     init() {
         return new Promise(async resolve => {
-            console.log("Initializing DB")
             if (this._initialized == false || LocaleDBExtra._initialized == false) {
                 await LocaleDBExtra.init()
                 this.info = await this.getDbInfo();
             }
-            console.log(`Db: ${this._initialized}`)
             this._initialized = true;
             resolve(this);
         })

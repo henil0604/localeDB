@@ -110,7 +110,6 @@ LocaleDB.isDBExists = (dbName: string): Promise<boolean> => {
 
 LocaleDB.init = () => {
     return new Promise(async resolve => {
-        console.log("Initializing LocaleDB")
         if (LocaleDB._initialized == false || LocaleDBExtra._initialized == false) {
             await LocaleDBExtra.init()
         }

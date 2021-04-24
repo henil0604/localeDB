@@ -25,7 +25,6 @@ LocaleDBExtra.paths = {};
 
 LocaleDBExtra.init = async () => {
     return new Promise(async (resolve) => {
-        console.log("Initializing LocaleDBExtra")
         if (LocaleDBExtra._initialized == false) {
             await LocaleDBExtra.loadConfig();
 
@@ -33,7 +32,6 @@ LocaleDBExtra.init = async () => {
 
             await LocaleDBExtra.createFileSystemWorkflow();
         }
-        console.log(`LocaleDBExtra: ${LocaleDBExtra._initialized}`)
         LocaleDBExtra._initialized = true;
         resolve(true);
     });
