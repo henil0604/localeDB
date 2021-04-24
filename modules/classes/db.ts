@@ -301,6 +301,10 @@ export = class DB implements LocaleDBClassesDB {
             update.data.data = [];
             update.update()
 
+            resolve({
+                status: "success",
+                message: "Successfuly Cleared Stage"
+            })
         })
     }
 
