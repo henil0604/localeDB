@@ -17,6 +17,7 @@ require("../../modules/interface");
 module.exports = class DB {
     constructor(dbName) {
         this._paths = {};
+        this._initialized = false;
         this.dbName = dbName;
         this._temp = {};
         this.info = {};
@@ -26,13 +27,17 @@ module.exports = class DB {
     }
     init() {
         return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
-            yield LocaleDBExtra.init();
-            this.info = yield this.getDbInfo();
+            if (!this._initialized) {
+                yield LocaleDBExtra.init();
+                this.info = yield this.getDbInfo();
+            }
+            this._initialized = true;
             resolve(this);
         }));
     }
     getDbInfo() {
         return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
+            yield this.init();
             let path = `${LocaleDBExtra.paths.dbsFolder.path}/${this.dbName}/db.json`;
             let data = require(path);
             resolve(data);
@@ -40,6 +45,7 @@ module.exports = class DB {
     }
     refreshDbInfo() {
         return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
+            yield this.init();
             this.info = yield this.getDbInfo();
             resolve(this.info);
         }));
@@ -49,6 +55,7 @@ module.exports = class DB {
             return null;
         }
         return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
+            yield this.init();
             let folderExists = yield snet_core.fs.isExist(path.join(this._paths.stages, stageName));
             let stageJsonFileExists = yield snet_core.fs.isExist(path.join(this._paths.stages, stageName, "stage.json"));
             resolve(folderExists && stageJsonFileExists);
@@ -59,6 +66,7 @@ module.exports = class DB {
             return null;
         }
         return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
+            yield this.init();
             if (!(yield this.isStageExists(stageName))) {
                 let stageFolder = path.join(this._paths.stages, stageName);
                 yield snet_core.fs.createDir(stageFolder);
@@ -102,6 +110,7 @@ module.exports = class DB {
             return null;
         }
         return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
+            yield this.init();
             if (yield this.isStageExists(stageName)) {
                 let stageFolder = path.join(this._paths.stages, stageName);
                 yield snet_core.fs.deleteDir(stageFolder);
@@ -132,6 +141,7 @@ module.exports = class DB {
             return null;
         }
         return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
+            yield this.init();
             if (yield this.isStageExists(stageName)) {
                 data.dataId = data.dataId == undefined ? snet_core.utils.randomToken(20) : data.dataId;
                 let dataFile = path.join(this._paths.stages, stageName, "data.json");
@@ -152,6 +162,7 @@ module.exports = class DB {
             return null;
         }
         return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
+            yield this.init();
             if (yield this.isStageExists(stageName)) {
                 let dataFile = path.join(this._paths.stages, stageName, "data.json");
                 let data = require(dataFile).data;
@@ -173,6 +184,7 @@ module.exports = class DB {
             return null;
         }
         return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
+            yield this.init();
             let data = yield this.getStageData(stageName);
             if (data.status == "success") {
                 if (data.result.length > 0) {
@@ -211,6 +223,7 @@ module.exports = class DB {
             return null;
         }
         return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
+            yield this.init();
             let data = yield this.getStageData(stageName);
             if (data.status == "success") {
                 if (data.result.length > 0) {
@@ -238,6 +251,7 @@ module.exports = class DB {
     }
     clearStage(stageName) {
         return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
+            yield this.init();
             let stageDataJsonPath = path.join(this._paths.stages, stageName, "data.json");
             let update = LocaleDBExtra.utils.updateJsonFile(stageDataJsonPath);
             update.data.data = [];
@@ -251,6 +265,7 @@ module.exports = class DB {
     }
     _updateTimestamps(stageName = null) {
         return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
+            yield this.init();
             if (stageName != null) {
                 let updateStageJsonLastModified = LocaleDBExtra.utils.updateJsonFile(path.join(this._paths.stages, stageName, "stage.json"));
                 updateStageJsonLastModified.data.lastModified = Date.now();

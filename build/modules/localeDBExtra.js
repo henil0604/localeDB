@@ -14,6 +14,7 @@ const _path = require("path");
 const fswin = require("fswin");
 const appRootPath = require("app-root-path");
 let LocaleDBExtra = {};
+LocaleDBExtra._initialized = false;
 LocaleDBExtra.data = {};
 LocaleDBExtra.data.appRoot = appRootPath.path;
 LocaleDBExtra.data.configPath = _path.join(appRootPath.path, "localeDBConfig.json");
@@ -25,9 +26,12 @@ LocaleDBExtra.utils = {};
 LocaleDBExtra.paths = {};
 LocaleDBExtra.init = () => __awaiter(void 0, void 0, void 0, function* () {
     return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
-        yield LocaleDBExtra.loadConfig();
-        LocaleDBExtra.setPaths();
-        yield LocaleDBExtra.createFileSystemWorkflow();
+        if (!LocaleDBExtra._initialized) {
+            yield LocaleDBExtra.loadConfig();
+            LocaleDBExtra.setPaths();
+            yield LocaleDBExtra.createFileSystemWorkflow();
+        }
+        LocaleDBExtra._initialized = true;
         resolve(true);
     }));
 });

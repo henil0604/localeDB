@@ -7,6 +7,8 @@ const fswin = require("fswin");
 const appRootPath = require("app-root-path");
 let LocaleDBExtra: LocaleDBExtraInterface = {};
 
+LocaleDBExtra._initialized = false;
+
 LocaleDBExtra.data = {};
 LocaleDBExtra.data.appRoot = appRootPath.path;
 LocaleDBExtra.data.configPath = _path.join(
@@ -23,13 +25,14 @@ LocaleDBExtra.paths = {};
 
 LocaleDBExtra.init = async () => {
     return new Promise(async (resolve) => {
-        await LocaleDBExtra.loadConfig();
+        if (!LocaleDBExtra._initialized) {
+            await LocaleDBExtra.loadConfig();
 
-        LocaleDBExtra.setPaths();
+            LocaleDBExtra.setPaths();
 
-        await LocaleDBExtra.createFileSystemWorkflow();
-
-
+            await LocaleDBExtra.createFileSystemWorkflow();
+        }
+        LocaleDBExtra._initialized = true;
         resolve(true);
     });
 };

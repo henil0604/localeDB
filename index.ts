@@ -11,6 +11,8 @@ let LocaleError = require("./modules/localeError");
 let LocaleDB: LocaleDBInterface = {};
 let LocaleDBExtra: LocaleDBExtraInterface = require("./modules/localeDBExtra");
 
+LocaleDB._initialized = false;
+
 LocaleDB.ConnectDb = (dbName: string): Promise<LocaleDBClassesDB> => {
     return new Promise(async resolve => {
 
@@ -99,10 +101,15 @@ LocaleDB.isDBExists = (dbName: string): Promise<boolean> => {
 };
 
 
-LocaleDB.init = async () => {
-    await LocaleDBExtra.init()
+LocaleDB.init = () => {
+    return new Promise(async resolve => {
+        if (LocaleDB._initialized == false || LocaleDBExtra._initialized == false) {
+            await LocaleDBExtra.init()
+        }
+        LocaleDB._initialized = true;
+        resolve(true)
+    })
 }
 
 
-LocaleDB.init()
 export = LocaleDB

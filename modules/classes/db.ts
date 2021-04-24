@@ -12,8 +12,10 @@ export = class DB implements LocaleDBClassesDB {
     _temp: object;
     info: any;
     _paths: LocaleDBClassesDBPaths = {};
+    _initialized: boolean;
 
     constructor(dbName) {
+        this._initialized = false;
         this.dbName = dbName;
         this._temp = {}
         this.info = {}
@@ -26,17 +28,18 @@ export = class DB implements LocaleDBClassesDB {
 
     init() {
         return new Promise(async resolve => {
-            await LocaleDBExtra.init()
-
-            this.info = await this.getDbInfo();
-
+            if (!this._initialized) {
+                await LocaleDBExtra.init()
+                this.info = await this.getDbInfo();
+            }
+            this._initialized = true;
             resolve(this)
         })
     }
 
     getDbInfo() {
         return new Promise(async (resolve) => {
-
+            await this.init();
             let path = `${LocaleDBExtra.paths.dbsFolder.path}/${this.dbName}/db.json`;
 
             let data = require(path);
@@ -47,6 +50,8 @@ export = class DB implements LocaleDBClassesDB {
 
     refreshDbInfo() {
         return new Promise(async resolve => {
+            await this.init();
+
             this.info = await this.getDbInfo();
 
             resolve(this.info)
@@ -58,6 +63,7 @@ export = class DB implements LocaleDBClassesDB {
             return null;
         }
         return new Promise(async resolve => {
+            await this.init();
 
             let folderExists = await snet_core.fs.isExist(path.join(this._paths.stages, stageName));
             let stageJsonFileExists = await snet_core.fs.isExist(path.join(this._paths.stages, stageName, "stage.json"));
@@ -71,6 +77,7 @@ export = class DB implements LocaleDBClassesDB {
             return null;
         }
         return new Promise(async resolve => {
+            await this.init();
 
             if (!await this.isStageExists(stageName)) {
                 let stageFolder = path.join(this._paths.stages, stageName);
@@ -126,6 +133,7 @@ export = class DB implements LocaleDBClassesDB {
             return null;
         }
         return new Promise(async resolve => {
+            await this.init();
 
             if (await this.isStageExists(stageName)) {
 
@@ -163,6 +171,8 @@ export = class DB implements LocaleDBClassesDB {
             return null;
         }
         return new Promise(async resolve => {
+            await this.init();
+
             if (await this.isStageExists(stageName)) {
 
                 data.dataId = data.dataId == undefined ? snet_core.utils.randomToken(20) : data.dataId;
@@ -189,6 +199,7 @@ export = class DB implements LocaleDBClassesDB {
             return null;
         }
         return new Promise(async resolve => {
+            await this.init();
 
             if (await this.isStageExists(stageName)) {
 
@@ -216,6 +227,7 @@ export = class DB implements LocaleDBClassesDB {
             return null;
         }
         return new Promise(async resolve => {
+            await this.init();
 
             let data = await this.getStageData(stageName);
             if (data.status == "success") {
@@ -265,6 +277,8 @@ export = class DB implements LocaleDBClassesDB {
         }
 
         return new Promise(async resolve => {
+            await this.init();
+
             let data = await this.getStageData(stageName);
             if (data.status == "success") {
                 if (data.result.length > 0) {
@@ -293,6 +307,7 @@ export = class DB implements LocaleDBClassesDB {
 
     clearStage(stageName): Promise<LocaleDBPromiseDefaultResponse> {
         return new Promise(async resolve => {
+            await this.init();
 
             let stageDataJsonPath = path.join(this._paths.stages, stageName, "data.json")
 
@@ -311,6 +326,8 @@ export = class DB implements LocaleDBClassesDB {
 
     _updateTimestamps(stageName = null): Promise<LocaleDBPromiseDefaultResponse> {
         return new Promise(async resolve => {
+            await this.init();
+
             if (stageName != null) {
                 let updateStageJsonLastModified = LocaleDBExtra.utils.updateJsonFile(path.join(this._paths.stages, stageName, "stage.json"));
                 updateStageJsonLastModified.data.lastModified = Date.now()

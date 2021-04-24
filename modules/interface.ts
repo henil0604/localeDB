@@ -4,6 +4,7 @@ interface LocaleDBInterface {
     isDBExists?: Function;
     init?: Function;
     deleteDB?: Function;
+    _initialized?: boolean;
 }
 
 interface LocaleDBExtraInterface {
@@ -18,6 +19,7 @@ interface LocaleDBExtraInterface {
     getDBdata?: Function;
     updateDbData?: Function;
     utils?: LocaleDBExtraUtilsInterface;
+    _initialized?: boolean;
 }
 
 interface LocaleDBExtraUtilsInterface {
@@ -61,6 +63,7 @@ interface LocaleDBVarsClasses {
     DB?;
 }
 interface LocaleDBClassesDB {
+    _initialized?: boolean;
     dbName?: string;
     _temp?: object;
     info?: any;

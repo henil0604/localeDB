@@ -19,6 +19,7 @@ Classes.DB = require("./modules/classes/db");
 let LocaleError = require("./modules/localeError");
 let LocaleDB = {};
 let LocaleDBExtra = require("./modules/localeDBExtra");
+LocaleDB._initialized = false;
 LocaleDB.ConnectDb = (dbName) => {
     return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
         if (yield LocaleDB.isDBExists(dbName)) {
@@ -88,8 +89,13 @@ LocaleDB.isDBExists = (dbName) => {
         resolve(folderExists && dbFileExists);
     }));
 };
-LocaleDB.init = () => __awaiter(void 0, void 0, void 0, function* () {
-    yield LocaleDBExtra.init();
-});
-LocaleDB.init();
+LocaleDB.init = () => {
+    return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
+        if (LocaleDB._initialized == false || LocaleDBExtra._initialized == false) {
+            yield LocaleDBExtra.init();
+        }
+        LocaleDB._initialized = true;
+        resolve(true);
+    }));
+};
 module.exports = LocaleDB;
