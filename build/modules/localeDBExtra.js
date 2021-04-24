@@ -26,6 +26,7 @@ LocaleDBExtra.utils = {};
 LocaleDBExtra.paths = {};
 LocaleDBExtra.init = () => __awaiter(void 0, void 0, void 0, function* () {
     return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
+        console.log("Initializing LocaleDBExtra");
         if (LocaleDBExtra._initialized == false) {
             yield LocaleDBExtra.loadConfig();
             LocaleDBExtra.setPaths();

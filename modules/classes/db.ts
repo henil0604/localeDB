@@ -28,6 +28,7 @@ export = class DB implements LocaleDBClassesDB {
 
     init() {
         return new Promise(async resolve => {
+            console.log("Initializing DB")
             if (this._initialized == false) {
                 await LocaleDBExtra.init()
                 this.info = await this.getDbInfo();

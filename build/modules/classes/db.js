@@ -27,6 +27,7 @@ module.exports = class DB {
     }
     init() {
         return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
+            console.log("Initializing DB");
             if (this._initialized == false) {
                 yield LocaleDBExtra.init();
                 this.info = yield this.getDbInfo();

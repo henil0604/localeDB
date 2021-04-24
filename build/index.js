@@ -95,6 +95,7 @@ LocaleDB.isDBExists = (dbName) => {
 };
 LocaleDB.init = () => {
     return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
+        console.log("Initializing LocaleDB");
         if (LocaleDB._initialized == false || LocaleDBExtra._initialized == false) {
             yield LocaleDBExtra.init();
         }
