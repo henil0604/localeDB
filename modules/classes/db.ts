@@ -2,11 +2,10 @@ let snet_core = require("snet_core");
 import LocaleDBExtra = require("../localeDBExtra");
 import LocaleError = require("../localeError");
 let path = require("path")
+let Stage = require("./stage");
 require("../interface");
 
-
 require("../../modules/interface");
-
 export = class DB implements LocaleDBClassesDB {
     dbName: string;
     _temp: object;
@@ -32,6 +31,7 @@ export = class DB implements LocaleDBClassesDB {
                 await LocaleDBExtra.init()
                 this.info = await this.getDbInfo();
             }
+
             this._initialized = true;
             resolve(this);
         })
@@ -165,165 +165,7 @@ export = class DB implements LocaleDBClassesDB {
         })
     }
 
-    addData(stageName, data, _checkStageExists = true) {
-        if (stageName == undefined || data == undefined || _checkStageExists == undefined) {
-            return null;
-        }
-        return new Promise(async resolve => {
-            await this.init();
-
-            if (await this.isStageExists(stageName)) {
-
-                data.dataId = data.dataId == undefined ? snet_core.utils.randomToken(20) : data.dataId;
-
-                let dataFile = path.join(this._paths.stages, stageName, "data.json");
-
-                let update = LocaleDBExtra.utils.updateJsonFile(dataFile);
-                update.data.data.push(data);
-                update.update();
-
-                await this._updateTimestamps(stageName)
-
-                resolve(data)
-
-            } else {
-                await this.createStage(stageName);
-                resolve(await this.addData(stageName, data, true))
-            }
-        })
-    }
-
-    getStageData(stageName): Promise<LocaleDBPromiseDefaultResponse> {
-        if (stageName == undefined) {
-            return null;
-        }
-        return new Promise(async resolve => {
-            await this.init();
-
-            if (await this.isStageExists(stageName)) {
-
-
-                let dataFile = path.join(this._paths.stages, stageName, "data.json");
-
-                let data = require(dataFile).data;
-
-                resolve({
-                    status: "success",
-                    result: data
-                })
-
-            } else {
-                resolve({
-                    status: "error",
-                    message: "Stage Does not Exists"
-                })
-            }
-        })
-    }
-
-    deleteDataById(stageName, dataId): Promise<LocaleDBPromiseDefaultResponse> {
-        if (stageName == undefined || dataId == undefined) {
-            return null;
-        }
-        return new Promise(async resolve => {
-            await this.init();
-
-            let data = await this.getStageData(stageName);
-            if (data.status == "success") {
-
-                if (data.result.length > 0) {
-                    let deletedData;
-
-                    for (let i = 0; i < data.result.length; i++) {
-                        let d = data.result[i];
-
-                        if (d.dataId == dataId) {
-
-                            data.result.splice(i, 1);
-
-                            let dataFile = path.join(this._paths.stages, stageName, "data.json");
-
-                            let update = LocaleDBExtra.utils.updateJsonFile(dataFile);
-                            update.data.data = data.result;
-                            update.update()
-
-                            await this._updateTimestamps(stageName)
-                            deletedData = d;
-                        }
-                    }
-
-                    resolve({
-                        status: "success",
-                        result: deletedData
-                    })
-
-                } else {
-                    resolve({
-                        status: "error",
-                        message: "No Data Found."
-                    })
-                }
-
-            } else {
-                resolve(data)
-            }
-        })
-    }
-
-    getDataById(stageName, dataId): Promise<LocaleDBPromiseDefaultResponse> {
-        if (stageName == undefined || dataId == undefined) {
-            return null;
-        }
-
-        return new Promise(async resolve => {
-            await this.init();
-
-            let data = await this.getStageData(stageName);
-            if (data.status == "success") {
-                if (data.result.length > 0) {
-                    for (let i = 0; i < data.result.length; i++) {
-                        let d = data.result[i];
-
-                        if (d.dataId == dataId) {
-                            resolve({
-                                status: "success",
-                                result: d
-                            })
-                        }
-                    }
-
-                } else {
-                    resolve({
-                        status: "error",
-                        message: "No Data Found."
-                    })
-                }
-            } else {
-                resolve(data)
-            }
-        })
-    }
-
-    clearStage(stageName): Promise<LocaleDBPromiseDefaultResponse> {
-        return new Promise(async resolve => {
-            await this.init();
-
-            let stageDataJsonPath = path.join(this._paths.stages, stageName, "data.json")
-
-            let update = LocaleDBExtra.utils.updateJsonFile(stageDataJsonPath);
-            update.data.data = [];
-            update.update()
-
-            this._updateTimestamps(stageName)
-
-            resolve({
-                status: "success",
-                message: "Successfuly Cleared Stage"
-            })
-        })
-    }
-
-    _updateTimestamps(stageName = null): Promise<LocaleDBPromiseDefaultResponse> {
+    _updateTimestamps(stageName: string | null = null): Promise<LocaleDBPromiseDefaultResponse> {
         return new Promise(async resolve => {
             await this.init();
 
@@ -343,4 +185,21 @@ export = class DB implements LocaleDBClassesDB {
             })
         })
     }
+
+    ConnectStage(stageName: string): Promise<LocaleDBClassesStage> {
+        return new Promise(async resolve => {
+            await this.init()
+
+            if (!await this.isStageExists(stageName)) {
+                await this.createStage(stageName);
+            }
+
+            let stageInstanse = new Stage(this.dbName, stageName);
+            await stageInstanse.init();
+
+            resolve(stageInstanse);
+
+        })
+    }
+
 }

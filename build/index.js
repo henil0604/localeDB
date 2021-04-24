@@ -47,6 +47,7 @@ LocaleDB.createDB = (dbName) => {
             yield snet_core.fs.writeFile(_path.join(LocaleDBExtra.paths.dbsFolder.path, dbName, "db.json"), JSON.stringify(dbJSONObj));
             yield snet_core.fs.createDir(_path.join(LocaleDBExtra.paths.dbsFolder.path, dbName, "stages"));
             let update = LocaleDBExtra.updateDbData();
+            delete dbJSONObj.lastModified;
             update.data.dbs.push(dbJSONObj);
             update.update();
             resolve(yield LocaleDB.ConnectDb(dbName));

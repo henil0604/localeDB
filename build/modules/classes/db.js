@@ -12,6 +12,7 @@ let snet_core = require("snet_core");
 const LocaleDBExtra = require("../localeDBExtra");
 const LocaleError = require("../localeError");
 let path = require("path");
+let Stage = require("./stage");
 require("../interface");
 require("../../modules/interface");
 module.exports = class DB {
@@ -135,133 +136,6 @@ module.exports = class DB {
             }
         }));
     }
-    addData(stageName, data, _checkStageExists = true) {
-        if (stageName == undefined || data == undefined || _checkStageExists == undefined) {
-            return null;
-        }
-        return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
-            yield this.init();
-            if (yield this.isStageExists(stageName)) {
-                data.dataId = data.dataId == undefined ? snet_core.utils.randomToken(20) : data.dataId;
-                let dataFile = path.join(this._paths.stages, stageName, "data.json");
-                let update = LocaleDBExtra.utils.updateJsonFile(dataFile);
-                update.data.data.push(data);
-                update.update();
-                yield this._updateTimestamps(stageName);
-                resolve(data);
-            }
-            else {
-                yield this.createStage(stageName);
-                resolve(yield this.addData(stageName, data, true));
-            }
-        }));
-    }
-    getStageData(stageName) {
-        if (stageName == undefined) {
-            return null;
-        }
-        return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
-            yield this.init();
-            if (yield this.isStageExists(stageName)) {
-                let dataFile = path.join(this._paths.stages, stageName, "data.json");
-                let data = require(dataFile).data;
-                resolve({
-                    status: "success",
-                    result: data
-                });
-            }
-            else {
-                resolve({
-                    status: "error",
-                    message: "Stage Does not Exists"
-                });
-            }
-        }));
-    }
-    deleteDataById(stageName, dataId) {
-        if (stageName == undefined || dataId == undefined) {
-            return null;
-        }
-        return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
-            yield this.init();
-            let data = yield this.getStageData(stageName);
-            if (data.status == "success") {
-                if (data.result.length > 0) {
-                    let deletedData;
-                    for (let i = 0; i < data.result.length; i++) {
-                        let d = data.result[i];
-                        if (d.dataId == dataId) {
-                            data.result.splice(i, 1);
-                            let dataFile = path.join(this._paths.stages, stageName, "data.json");
-                            let update = LocaleDBExtra.utils.updateJsonFile(dataFile);
-                            update.data.data = data.result;
-                            update.update();
-                            yield this._updateTimestamps(stageName);
-                            deletedData = d;
-                        }
-                    }
-                    resolve({
-                        status: "success",
-                        result: deletedData
-                    });
-                }
-                else {
-                    resolve({
-                        status: "error",
-                        message: "No Data Found."
-                    });
-                }
-            }
-            else {
-                resolve(data);
-            }
-        }));
-    }
-    getDataById(stageName, dataId) {
-        if (stageName == undefined || dataId == undefined) {
-            return null;
-        }
-        return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
-            yield this.init();
-            let data = yield this.getStageData(stageName);
-            if (data.status == "success") {
-                if (data.result.length > 0) {
-                    for (let i = 0; i < data.result.length; i++) {
-                        let d = data.result[i];
-                        if (d.dataId == dataId) {
-                            resolve({
-                                status: "success",
-                                result: d
-                            });
-                        }
-                    }
-                }
-                else {
-                    resolve({
-                        status: "error",
-                        message: "No Data Found."
-                    });
-                }
-            }
-            else {
-                resolve(data);
-            }
-        }));
-    }
-    clearStage(stageName) {
-        return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
-            yield this.init();
-            let stageDataJsonPath = path.join(this._paths.stages, stageName, "data.json");
-            let update = LocaleDBExtra.utils.updateJsonFile(stageDataJsonPath);
-            update.data.data = [];
-            update.update();
-            this._updateTimestamps(stageName);
-            resolve({
-                status: "success",
-                message: "Successfuly Cleared Stage"
-            });
-        }));
-    }
     _updateTimestamps(stageName = null) {
         return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
             yield this.init();
@@ -277,6 +151,17 @@ module.exports = class DB {
                 status: "success",
                 message: "Successfuly Updated Timestamp"
             });
+        }));
+    }
+    ConnectStage(stageName) {
+        return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
+            yield this.init();
+            if (!(yield this.isStageExists(stageName))) {
+                yield this.createStage(stageName);
+            }
+            let stageInstanse = new Stage(this.dbName, stageName);
+            yield stageInstanse.init();
+            resolve(stageInstanse);
         }));
     }
 };

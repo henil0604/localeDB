@@ -17,44 +17,39 @@ let localeDb = require("localedb");
 // Creating Connection to Database
 let conn = await localeDb.ConnectDb("MyDatabase");
 
-// Creating Stage 
-await conn.createStage("users");
+// Creating Stage
+await conn.createStage("Users");
+
+// Connecting to Stage
+let Stage_Users = await conn.ConnectStage("Users"); // Creates Stages if Doesn't Exists
 
 // Adding Data to Stage
-let User = await conn.addData("users", {
-    username: "Henil",
-    email: "myemail@email.com",
-    password: "itsSecret"
+let user1 = await Stage_Users.addData({
+     username: "henil0604",
+     email: "myemail@email.com",
+     password: "itsSecret",
+     dataId: "r4U8c3EqH1qE0S17miGD" // Optional, Generates Automatic If Doesn't Provided
 })
 
-// Getting All Data From Stage
-let allUsers = await conn.getStageData("users");
+// Getting Data By it's dataId
+let gotUser = await Stage_Users.getDataById(user1.dataId);
 
-// Getting Data by dataId From Stage
-let user1 = await conn.getDataById("users", User.dataId);
-
-// Deleting Particular Data From Stage By It's Id
-let user1Deleted = await conn.deleteDataById("users", User.dataId);
+// Deleting Data By It's dataId
+let deletedUser = await Stage_Users.deleteDataById(user1.dataId);
 
 // Clearing All Data in Stage
-await conn.clearStage("users");
+await Stage_Users.clear();
 
-// Delete Stage
-await conn.deleteStage("users");
+// deleting Stage
+await conn.deleteStage("Users");
 
-// Delete Database
+// checking if Stage Exists
+await conn.isStageExists("Users"); // false
+
+// deleting Database
 await localeDb.deleteDB("MyDatabase");
 
-// Checking if Database Exists
-await localeDb.isDBExists("MyDatabase"); // false
-```
+// checking if Database Exists
+await localeDb.isDBExists("MyDatabase") // false
 
-- ```conn.createStage(<stageName>)``` Will Create Stage In Your Database Folder
-- ```conn.addData(<stageName>, <data>)``` will add the Data in Given Stage
-- ```conn.addData(<stageName>, <data>)``` Will Return JSON Object With it's own Unique ```dataId```
-- ```conn.getStageData(<stageName>)``` Will get all the Data from given Stage.
-- ```conn.getDataById(<stageName>, <dataId>)``` will get the data from Given Stage and find the data by its ```dataId```
-- ```conn.deleteDataById(<stageName>, <dataId>)``` will delete the Data from Given Stage By its ```dataId```
-- ```conn.deleteStage(<stageName>)``` will delete given Stage from Database Folder
-- ```localeDb.deleteDB(<dbName>)``` will delete Given Database From Db Folder
-- ```localeDb.isDBExists(<dbName>)``` will check if Database Exists in Db Folder. Returns ```true``` or ```false```.
+```

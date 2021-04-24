@@ -41,7 +41,6 @@ LocaleDB.createDB = (dbName: string): Promise<LocaleDBClassesDB> => {
                 stages: []
             }
 
-
             await snet_core.fs.writeFile(
                 _path.join(LocaleDBExtra.paths.dbsFolder.path, dbName, "db.json"),
                 JSON.stringify(dbJSONObj)
@@ -50,6 +49,7 @@ LocaleDB.createDB = (dbName: string): Promise<LocaleDBClassesDB> => {
             await snet_core.fs.createDir(_path.join(LocaleDBExtra.paths.dbsFolder.path, dbName, "stages"));
 
             let update = LocaleDBExtra.updateDbData();
+            delete dbJSONObj.lastModified;
             update.data.dbs.push(dbJSONObj)
             update.update()
 

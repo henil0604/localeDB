@@ -73,11 +73,8 @@ interface LocaleDBClassesDB {
     refreshDbInfo?: Function;
     isStageExists?: Function;
     createStage?: Function;
-    deleteStage?: Function;
-    addData?: Function;
-    getStageData?: Function;
-    deleteDataById?: Function;
-    clearStage?: Function;
+    ConnectStage?: Function;
+    _updateTimestamps
 }
 
 interface LocaleDBClassesDBPaths {
@@ -89,5 +86,33 @@ interface LocaleDBClassesDBPaths {
 interface LocaleDBPromiseDefaultResponse {
     status: string;
     message?: any;
-    result?: any[] | object[];
+    result?: any[];
+}
+
+interface LocaleDBClassesStage {
+    _initialized?: boolean;
+    dbName?: string;
+    stageName?: string;
+    _dbInfo?: object;
+    _stageInfo?: object;
+    _paths?: LocaleDBClassesStagePaths;
+    init?: Function;
+    data?: object;
+    getDbInfo?: Function;
+    getStageInfo?: Function;
+    addData?: Function;
+    getAllData?: Function;
+    deleteDataById?: Function;
+    getDataById?: Function;
+    clear?: Function;
+    _updateTimestamps?: Function;
+}
+
+interface LocaleDBClassesStagePaths {
+    db?: string;
+    dbJsonFile?: string;
+    stages?: string;
+    stageFolder?: string;
+    stageJsonFile?: string;
+    stageDataJson?: string;
 }
