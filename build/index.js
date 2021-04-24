@@ -22,6 +22,7 @@ let LocaleDBExtra = require("./modules/localeDBExtra");
 LocaleDB._initialized = false;
 LocaleDB.ConnectDb = (dbName) => {
     return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
+        yield LocaleDB.init();
         if (yield LocaleDB.isDBExists(dbName)) {
             resolve(yield new Classes.DB(dbName));
         }
@@ -33,6 +34,7 @@ LocaleDB.ConnectDb = (dbName) => {
 };
 LocaleDB.createDB = (dbName) => {
     return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
+        yield LocaleDB.init();
         if (!(yield LocaleDB.isDBExists(dbName))) {
             yield snet_core.fs.createDir(_path.join(LocaleDBExtra.paths.dbsFolder.path, dbName));
             let dbJSONObj = {
@@ -59,6 +61,7 @@ LocaleDB.createDB = (dbName) => {
 };
 LocaleDB.deleteDB = (dbName) => {
     return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
+        yield LocaleDB.init();
         if (yield LocaleDB.isDBExists(dbName)) {
             yield snet_core.fs.deleteDir(_path.join(LocaleDBExtra.paths.dbsFolder.path, dbName));
             let update = LocaleDBExtra.updateDbData();
@@ -84,6 +87,7 @@ LocaleDB.deleteDB = (dbName) => {
 };
 LocaleDB.isDBExists = (dbName) => {
     return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
+        yield LocaleDB.init();
         let folderExists = yield snet_core.fs.isExist(_path.join(LocaleDBExtra.paths.dbsFolder.path, dbName));
         let dbFileExists = yield snet_core.fs.isExist(_path.join(LocaleDBExtra.paths.dbsFolder.path, dbName, "db.json"));
         resolve(folderExists && dbFileExists);

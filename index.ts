@@ -15,6 +15,7 @@ LocaleDB._initialized = false;
 
 LocaleDB.ConnectDb = (dbName: string): Promise<LocaleDBClassesDB> => {
     return new Promise(async resolve => {
+        await LocaleDB.init();
 
         if (await LocaleDB.isDBExists(dbName)) {
             resolve(await new Classes.DB(dbName));
@@ -27,6 +28,8 @@ LocaleDB.ConnectDb = (dbName: string): Promise<LocaleDBClassesDB> => {
 
 LocaleDB.createDB = (dbName: string): Promise<LocaleDBClassesDB> => {
     return new Promise(async (resolve) => {
+        await LocaleDB.init();
+
         if (!(await LocaleDB.isDBExists(dbName))) {
 
             await snet_core.fs.createDir(_path.join(LocaleDBExtra.paths.dbsFolder.path, dbName));
@@ -63,6 +66,8 @@ LocaleDB.createDB = (dbName: string): Promise<LocaleDBClassesDB> => {
 
 LocaleDB.deleteDB = (dbName: string): Promise<LocaleDBPromiseDefaultResponse | any> => {
     return new Promise(async resolve => {
+        await LocaleDB.init();
+
         if (await LocaleDB.isDBExists(dbName)) {
             await snet_core.fs.deleteDir(
                 _path.join(LocaleDBExtra.paths.dbsFolder.path, dbName)
@@ -93,6 +98,8 @@ LocaleDB.deleteDB = (dbName: string): Promise<LocaleDBPromiseDefaultResponse | a
 
 LocaleDB.isDBExists = (dbName: string): Promise<boolean> => {
     return new Promise(async (resolve) => {
+        await LocaleDB.init();
+
         let folderExists = await snet_core.fs.isExist(_path.join(LocaleDBExtra.paths.dbsFolder.path, dbName));
         let dbFileExists = await snet_core.fs.isExist(_path.join(LocaleDBExtra.paths.dbsFolder.path, dbName, "db.json"));
 

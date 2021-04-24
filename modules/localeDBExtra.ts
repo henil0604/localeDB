@@ -25,7 +25,7 @@ LocaleDBExtra.paths = {};
 
 LocaleDBExtra.init = async () => {
     return new Promise(async (resolve) => {
-        if (!LocaleDBExtra._initialized) {
+        if (LocaleDBExtra._initialized == false) {
             await LocaleDBExtra.loadConfig();
 
             LocaleDBExtra.setPaths();
