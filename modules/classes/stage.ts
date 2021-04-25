@@ -93,20 +93,26 @@ export = class Stage implements LocaleDBClassesStage {
         })
     }
 
-    getDataById(dataId) {
+    getDataById(dataId): Promise<object[] | null | object> {
         return new Promise(async resolve => {
             this.init();
 
             let data = await this.getAllData();
-            let foundData;
+            let foundData = [];
 
             for (let i = 0; i < data.result.length; i++) {
                 let d = data.result[i];
                 if (d.dataId == dataId) {
-                    foundData = d;
+                    foundData.push(d);
                 }
             }
 
+            if (foundData.length != undefined && foundData.length == 1) {
+                foundData = foundData[0];
+            }
+            if (foundData.length != undefined && foundData.length == 0) {
+                foundData = null;
+            }
             resolve(foundData);
         })
     }
@@ -170,6 +176,54 @@ export = class Stage implements LocaleDBClassesStage {
                 status: "success",
                 message: "Successfuly Updated Timestamp"
             })
+        })
+    }
+
+    updateData(dataId, data): Promise<LocaleDBPromiseDefaultResponse> {
+        if (dataId == undefined || data == undefined) {
+            return null;
+        }
+        return new Promise(async resolve => {
+            await this.init()
+
+            let toResolve: LocaleDBPromiseDefaultResponse = {
+                status: "error"
+            };
+
+            let update = LocaleDBExtra.utils.updateJsonFile(this._paths.stageDataJson)
+            let updated = [];
+
+            for (let i = 0; i < update.data.data.length; i++) {
+                let d = update.data.data[i];
+                if (d.dataId == dataId) {
+                    for (let i = 0; i < Object.keys(data).length; i++) {
+                        let dataKey = Object.keys(data)[i];
+                        let dataValue = data[dataKey];
+
+                        if (d[dataKey] == undefined) {
+                            d[dataKey] = dataValue;
+                        } else {
+                            d[dataKey] = dataValue
+                        }
+                    }
+                    updated.push(d);
+                    update.data.data[i] = d
+                    this._updateTimestamps();
+                    update.update();
+                    update = LocaleDBExtra.utils.updateJsonFile(this._paths.stageDataJson)
+                }
+            }
+
+            update.update()
+
+            toResolve = {
+                status: "success",
+                result: {
+                    updated: updated
+                }
+            }
+
+            resolve(toResolve)
         })
     }
 }

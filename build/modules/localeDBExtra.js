@@ -9,7 +9,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 const fse = require("fs-extra");
-const hideFile = require("hidefile");
 const _path = require("path");
 const fswin = require("fswin");
 const appRootPath = require("app-root-path");

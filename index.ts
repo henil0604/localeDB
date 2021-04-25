@@ -1,7 +1,4 @@
-let fs = require("fs");
-const fse = require("fs-extra");
 const _path = require("path");
-const hideFile = require("hidefile");
 let snet_core = require("snet_core");
 require("./modules/interface");
 let Classes: LocaleDBVarsClasses = {};

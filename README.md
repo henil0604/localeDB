@@ -34,6 +34,11 @@ let user1 = await Stage_Users.addData({
 // Getting Data By it's dataId
 let gotUser = await Stage_Users.getDataById(user1.dataId);
 
+// Update Data By it's dataId
+let updateUser = await Stage_Users.updateData(user1.dataId, {
+     verified: true
+})
+
 // Deleting Data By It's dataId
 let deletedUser = await Stage_Users.deleteDataById(user1.dataId);
 
