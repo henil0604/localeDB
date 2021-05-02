@@ -71,11 +71,11 @@ export = class DB implements LocaleDBClassesDB {
         })
     }
 
-    createStage(stageName) {
-        if (stageName == undefined) {
-            return null;
-        }
+    createStage(stageName): Promise<LocaleDBClassesStage | null> {
         return new Promise(async resolve => {
+            if (stageName == undefined) {
+                return null;
+            }
             await this.init();
 
             if (!await this.isStageExists(stageName)) {
@@ -112,17 +112,13 @@ export = class DB implements LocaleDBClassesDB {
                 await this._updateTimestamps()
 
                 this.refreshDbInfo()
-                resolve({
-                    status: "success",
-                    message: "Successfuly Created Stage"
-                })
+                let stageConnection = await this.ConnectStage(stageName);
+                resolve(stageConnection)
 
             } else {
                 this.refreshDbInfo()
-                resolve(new LocaleError({
-                    error: "Stage Already Exists",
-                    log: false
-                }))
+                let stageConnection = await this.ConnectStage(stageName);
+                resolve(stageConnection)
             }
         })
     }

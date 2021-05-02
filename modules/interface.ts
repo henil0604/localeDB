@@ -90,23 +90,24 @@ interface LocaleDBPromiseDefaultResponse {
 }
 
 interface LocaleDBClassesStage {
-    _initialized?: boolean;
-    dbName?: string;
-    stageName?: string;
-    _dbInfo?: object;
-    _stageInfo?: object;
-    _paths?: LocaleDBClassesStagePaths;
-    init?: Function;
-    data?: object;
-    getDbInfo?: Function;
-    getStageInfo?: Function;
-    addData?: Function;
-    getAllData?: Function;
-    deleteDataById?: Function;
-    getDataById?: Function;
-    clear?: Function;
-    updateData?: Function;
-    _updateTimestamps?: Function;
+    _initialized: boolean;
+    dbName: string;
+    stageName: string;
+    _dbInfo: object;
+    _stageInfo: object;
+    _paths: LocaleDBClassesStagePaths;
+    init: Function;
+    data: object;
+    getDbInfo: Function;
+    getStageInfo: Function;
+    addData: Function;
+    getAllData: Function;
+    deleteDataById: Function;
+    getDataById: Function;
+    clear: Function;
+    updateDataById: Function;
+    updateData: Function;
+    _updateTimestamps: Function;
 }
 
 interface LocaleDBClassesStagePaths {

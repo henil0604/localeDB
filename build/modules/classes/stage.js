@@ -140,7 +140,7 @@ module.exports = class Stage {
             });
         }));
     }
-    updateData(dataId, data) {
+    updateDataById(dataId, data) {
         if (dataId == undefined || data == undefined) {
             return null;
         }
@@ -176,6 +176,44 @@ module.exports = class Stage {
                 status: "success",
                 result: {
                     updated: updated
+                }
+            };
+            resolve(toResolve);
+        }));
+    }
+    updateData(compare, data) {
+        if (compare == undefined || data == undefined) {
+            return null;
+        }
+        return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
+            let toResolve = {
+                status: "error"
+            };
+            let update = LocaleDBExtra.utils.updateJsonFile(this._paths.stageDataJson);
+            let updated = [];
+            for (let i = 0; i < update.data.data.length; i++) {
+                let d = update.data.data[i];
+                let canUpdated = false;
+                Object.keys(compare).forEach(compareElementKey => {
+                    if (d[compareElementKey] == compare[compareElementKey]) {
+                        canUpdated = true;
+                    }
+                    else {
+                        canUpdated = false;
+                    }
+                });
+                if (canUpdated) {
+                    Object.keys(data).forEach(elementKey => {
+                        d[elementKey] = data[elementKey];
+                    });
+                    updated.push(d);
+                }
+            }
+            update.update();
+            toResolve = {
+                status: "success",
+                result: {
+                    updated
                 }
             };
             resolve(toResolve);

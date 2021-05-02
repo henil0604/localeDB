@@ -10,6 +10,11 @@ let LocaleDBExtra: LocaleDBExtraInterface = require("./modules/localeDBExtra");
 
 LocaleDB._initialized = false;
 
+/**
+ * 
+ * @param {string} dbName Database to Connect
+ * @returns {Promise<LocaleDBClassesDB>}
+ */
 LocaleDB.ConnectDb = (dbName: string): Promise<LocaleDBClassesDB> => {
     return new Promise(async resolve => {
         await LocaleDB.init();

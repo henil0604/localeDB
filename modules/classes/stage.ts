@@ -179,7 +179,7 @@ export = class Stage implements LocaleDBClassesStage {
         })
     }
 
-    updateData(dataId, data): Promise<LocaleDBPromiseDefaultResponse> {
+    updateDataById(dataId, data): Promise<LocaleDBPromiseDefaultResponse> {
         if (dataId == undefined || data == undefined) {
             return null;
         }
@@ -224,6 +224,52 @@ export = class Stage implements LocaleDBClassesStage {
             }
 
             resolve(toResolve)
+        })
+    }
+
+    updateData(compare: object, data: object): Promise<LocaleDBPromiseDefaultResponse | null> {
+        if (compare == undefined || data == undefined) {
+            return null;
+        }
+        return new Promise(async resolve => {
+
+            let toResolve: LocaleDBPromiseDefaultResponse = {
+                status: "error"
+            };
+
+            let update = LocaleDBExtra.utils.updateJsonFile(this._paths.stageDataJson)
+            let updated = [];
+
+            for (let i = 0; i < update.data.data.length; i++) {
+                let d = update.data.data[i];
+                let canUpdated: boolean = false;
+
+                Object.keys(compare).forEach(compareElementKey => {
+                    if (d[compareElementKey] == compare[compareElementKey]) {
+                        canUpdated = true;
+                    } else {
+                        canUpdated = false;
+                    }
+                });
+
+                if (canUpdated) {
+                    Object.keys(data).forEach(elementKey => {
+                        d[elementKey] = data[elementKey]
+                    });
+                    updated.push(d)
+                }
+            }
+
+            update.update()
+
+            toResolve = {
+                status: "success",
+                result: {
+                    updated
+                }
+            }
+
+            resolve(toResolve);
         })
     }
 }

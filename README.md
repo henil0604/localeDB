@@ -14,6 +14,7 @@ let localeDb = require("localedb");
 
 ## Usage
 ```js
+
 // Creating Connection to Database
 let conn = await localeDb.ConnectDb("MyDatabase");
 
@@ -35,9 +36,20 @@ let user1 = await Stage_Users.addData({
 let gotUser = await Stage_Users.getDataById(user1.dataId);
 
 // Update Data By it's dataId
-let updateUser = await Stage_Users.updateData(user1.dataId, {
+let updateUser = await Stage_Users.updateDataById(user1.dataId, {
      verified: true
 })
+
+// Update Data By Its Keys
+let updatedUserByUsername = await Stage_Users.updateData({
+     username: "henil0604"
+}, {
+     username: 'henil'
+})
+
+// Getting All Data from Stage
+let allUsers = await Stage_Users.getAllData()
+console.log(allUsers.result) // Arrays Of Data Objects
 
 // Deleting Data By It's dataId
 let deletedUser = await Stage_Users.deleteDataById(user1.dataId);

@@ -62,10 +62,10 @@ module.exports = class DB {
         }));
     }
     createStage(stageName) {
-        if (stageName == undefined) {
-            return null;
-        }
         return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
+            if (stageName == undefined) {
+                return null;
+            }
             yield this.init();
             if (!(yield this.isStageExists(stageName))) {
                 let stageFolder = path.join(this._paths.stages, stageName);
@@ -91,17 +91,13 @@ module.exports = class DB {
                 updateDbJsonFile.update();
                 yield this._updateTimestamps();
                 this.refreshDbInfo();
-                resolve({
-                    status: "success",
-                    message: "Successfuly Created Stage"
-                });
+                let stageConnection = yield this.ConnectStage(stageName);
+                resolve(stageConnection);
             }
             else {
                 this.refreshDbInfo();
-                resolve(new LocaleError({
-                    error: "Stage Already Exists",
-                    log: false
-                }));
+                let stageConnection = yield this.ConnectStage(stageName);
+                resolve(stageConnection);
             }
         }));
     }
