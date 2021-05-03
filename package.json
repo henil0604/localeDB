@@ -1,6 +1,6 @@
 {
   "name": "localedb",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "description": "localedb is an Npm Package Which can Make Database In Your Local Storage.",
   "main": "./build/index.js",
   "scripts": {
